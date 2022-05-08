@@ -38,8 +38,8 @@ git push origin develop
 # Build and push new docker images
 ./build.sh
 docker tag $user/$name:latest $user/$name:$version
-docker push $user/$name:$version
-docker push $user/$name:latest
+# docker push $user/$name:$version
+# docker push $user/$name:latest
 
 # Exit gracefully
 exit 0
