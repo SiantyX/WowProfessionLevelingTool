@@ -19,20 +19,6 @@ services:
       - "5000:5000"
     restart: unless-stopped
 
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower_wplt
-    environment:
-      - "WATCHTOWER_LABEL_ENABLE=true"
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    networks:
-      - wplt
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 300
-
 networks:
   wplt:
     name: wplt
