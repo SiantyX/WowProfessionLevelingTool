@@ -4,16 +4,15 @@ from app.forms import UserInputForm
 from datetime import datetime
 from app.functions import *
 
-VERSION="0.1.0"
+VERSION="0.2.0"
 
 author = {
-    'username': 'Znibb',
-    'server':   'Noggenfogger',
-    'email':    "znibb@zkylark.se"}
+    'username': 'Original by Znibb, difficulty by ItsMonkk. Merged by SiantyX',
+    'email':    "Original: znibb@zkylark.se Merge: siantyx@gmail.com"}
 title = {
     'short':    'WPLT',
-    'long':     'WowProfessionLevelingTool v' + VERSION,
-    'source':   'https://github.com/znibb/WowProfessionLevelingTool'}
+    'long':     'WowProfessionLevelingTool-difficulty v' + VERSION,
+    'source':   'https://github.com/znibb/WowProfessionLevelingTool + https://github.com/ItsMonkk/WowProfessionLevelingTool = https://github.com/SiantyX/WowProfessionLevelingTool'}
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -37,6 +36,8 @@ def index():
         session["includeQuest"] = form.includeQuest.data
         session["includeReputation"] = form.includeReputation.data
         session["includeSeasonal"] = form.includeSeasonal.data
+        # https://github.com/ItsMonkk/WowProfessionLevelingTool/commit/40431fb6654ba5de61fd536ca022c26be7369d7b
+        session["difficulty"] = form.difficulty.data
         session["blacksmithingSchool"] = form.blacksmithingSchool.data
         session["engineeringSchool"] = form.engineeringSchool.data
         session["leatherworkingSchool"] = form.leatherworkingSchool.data
@@ -66,6 +67,8 @@ def results():
         form.includeQuest.data=session.get("includeQuest")
         form.includeReputation.data=session.get("includeReputation")
         form.includeSeasonal.data=session.get("includeSeasonal")
+        # https://github.com/ItsMonkk/WowProfessionLevelingTool/commit/40431fb6654ba5de61fd536ca022c26be7369d7b
+        form.difficulty.data=session.get("difficulty")
         form.blacksmithingSchool.data=session.get("blacksmithingSchool")
         form.engineeringSchool.data=session.get("engineeringSchool")
         form.leatherworkingSchool.data=session.get("leatherworkingSchool")
@@ -82,6 +85,8 @@ def results():
         session.pop("includeQuest", None)
         session.pop("includeReputation", None)
         session.pop("includeSeasonal", None)
+        # https://github.com/ItsMonkk/WowProfessionLevelingTool/commit/40431fb6654ba5de61fd536ca022c26be7369d7b
+        session.pop("difficulty", None)
         session.pop("blacksmithingSchool", None)
         session.pop("engineeringSchool", None)
         session.pop("leatherworkingSchool", None)
@@ -104,6 +109,8 @@ def results():
         session["includeQuest"] = form.includeQuest.data
         session["includeReputation"] = form.includeReputation.data
         session["includeSeasonal"] = form.includeSeasonal.data
+        # # https://github.com/ItsMonkk/WowProfessionLevelingTool/commit/40431fb6654ba5de61fd536ca022c26be7369d7b
+        session["difficulty"] = form.difficulty.data
         session["blacksmithingSchool"] = form.blacksmithingSchool.data
         session["engineeringSchool"] = form.engineeringSchool.data
         session["leatherworkingSchool"] = form.leatherworkingSchool.data
@@ -165,13 +172,19 @@ def results():
             break
 
         # Remove recipes that we've out-levelled
+        # https://github.com/ItsMonkk/WowProfessionLevelingTool/commit/40431fb6654ba5de61fd536ca022c26be7369d7b
         temp = recipes.copy()
         for name, info in temp.items():
-            if info["Yellow"] <= currentSkill:
+            if info["Grey"] <= currentSkill:
+                recipes.pop(name)
+            elif (form.difficulty.data == "Yellow") and (currentSkill >= info["Green"]):
+                recipes.pop(name)
+            elif (form.difficulty.data == "Orange") and (currentSkill >= info["Yellow"]):
                 recipes.pop(name)
 
         # Determine next craft
-        bestCraft = getCheapestSkillingRecipe(recipes, recipePrices, currentSkill, enchantingRodsOverride)
+        # https://github.com/ItsMonkk/WowProfessionLevelingTool/commit/40431fb6654ba5de61fd536ca022c26be7369d7b
+        (bestCraft, multiplier) = getCheapestSkillingRecipe(recipes, recipePrices, currentSkill, enchantingRodsOverride)
 
         # Break loop if no skillable craft is available
         if bestCraft == '':
@@ -180,26 +193,28 @@ def results():
         # Update craft list
         # Check if this is the first entry
         if not bool(craftList):
-            craftList[1] = {"Start": currentSkill, "Count": 1, "Recipe": bestCraft, "Cost": prettyPrintPrice(recipePrices[bestCraft])}
+            craftList[1] = {"Start": currentSkill, "End": 1, "Count": multiplier, "Recipe": bestCraft, "Cost": prettyPrintPrice(recipePrices[bestCraft])}
         else:
             # Get index of the last entry
             lastIndex = list(craftList.keys())[-1]
             # If this craft is the same as the last one
             if craftList[lastIndex]["Recipe"] == bestCraft:
                 # Increment the count
-                craftList[lastIndex]["Count"] += 1
+                craftList[lastIndex]["End"] += 1
+                craftList[lastIndex]["Count"] = craftList[lastIndex]["Count"] + multiplier
             # If it's a new one
             else:
                 # Create a new entry
-                craftList[lastIndex+1] = {"Start": currentSkill, "Count": 1, "Recipe": bestCraft, "Cost": prettyPrintPrice(recipePrices[bestCraft])}
+                craftList[lastIndex]["Count"] = craftList[lastIndex]["Count"]
+                craftList[lastIndex+1] = {"Start": currentSkill, "End": 1,"Count": multiplier, "Recipe": bestCraft, "Cost": prettyPrintPrice(recipePrices[bestCraft])}
 
         # Add reagents for the chosen recipe to the purchase list
         for reagent, amount in recipes[bestCraft]["Reagents"].items():
             if reagent in reagentsToBuy:
-                reagentsToBuy[reagent]["Amount"] += amount
+                reagentsToBuy[reagent]["Amount"] = reagentsToBuy[reagent]["Amount"] + (amount * multiplier)
             else:
                 reagentsToBuy[reagent] = dict()
-                reagentsToBuy[reagent]["Amount"] = amount
+                reagentsToBuy[reagent]["Amount"] = (amount * multiplier)
                 reagentsToBuy[reagent]["PPU"] = reagentPrices[reagent]["Price"]
 
         # Add recipe to appropriate shopping list
@@ -223,6 +238,10 @@ def results():
 
         # Increment skill
         currentSkill += 1
+
+     # Clean up partial Counts
+    for craft in craftList:
+        craftList[craft]["Count"] = math.ceil(craftList[craft]["Count"])
 
     # Check if any reagents on the shopping list will be crafted
     temp = reagentsToBuy.copy()
@@ -267,7 +286,8 @@ def results():
 
     # Calculate cost for each reagent purchase
     for reagent in reagentsToBuy:
-        reagentsToBuy[reagent]["Total"] = prettyPrintPrice(reagentsToBuy[reagent]["Amount"] * reagentPrices[reagent]["Price"])
+        reagentsToBuy[reagent]["Amount"] = math.ceil(reagentsToBuy[reagent]["Amount"])
+        reagentsToBuy[reagent]["Total"] = prettyPrintPrice(math.ceil(reagentsToBuy[reagent]["Amount"]) * reagentPrices[reagent]["Price"])
 
     # Pretty print PPU for reagents
     for reagent in reagentsToBuy:

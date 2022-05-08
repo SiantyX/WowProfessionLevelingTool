@@ -48,6 +48,14 @@ class UserInputForm(FlaskForm):
     includeQuest = BooleanField(u'Quest')
     includeReputation = BooleanField(u'Reputation')
     includeSeasonal = BooleanField(u'Seasonal')
+
+    # https://github.com/ItsMonkk/WowProfessionLevelingTool/commit/40431fb6654ba5de61fd536ca022c26be7369d7b
+    difficulty = RadioField(u'Difficulty:',
+        choices=[("Green", "Green"), 
+            ("Yellow", "Yellow"), 
+            ("Orange", "Orange")],
+        default="Orange")
+
     blacksmithingSchool = RadioField(u'School:',
         choices=[("None", "None"),
                 ("Armorsmithing", "Armorsmithing"),
