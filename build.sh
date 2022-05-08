@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build --no-cache -t znibb/wplt:latest .
+docker build --no-cache -t SiantyX/wplt:latest .
