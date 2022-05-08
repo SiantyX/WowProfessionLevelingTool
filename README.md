@@ -1,6 +1,6 @@
 # WowProfessionLevelingTool
 
-Do yu dislike the randomness of Wowhead profession guides? Then this is the tool for you!
+Do you dislike the randomness of Wowhead profession guides? Then this is the tool for you!
 
 This version is for World of Warcraft The Burning Crusade Classic.
 
