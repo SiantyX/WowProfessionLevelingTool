@@ -48,7 +48,8 @@ def index():
     return render_template('index.html',
         title=title,
         author=author,
-        form=form)
+        form=form,
+        root=app.config["APPLICATION_ROOT"])
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
@@ -321,6 +322,7 @@ def results():
         title=title,
         author=author,
         form=form,
+        root=app.config["APPLICATION_ROOT"],
         craftList=craftList,
         reagents=reagentsToBuy,
         reagentCost=reagentCost,
