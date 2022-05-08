@@ -2,7 +2,7 @@
 
 version=$1
 current_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
-user=SiantyX
+user=siantyx
 name=wplt
 
 # Check that script was run with argument
