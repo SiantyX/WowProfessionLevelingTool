@@ -4,7 +4,7 @@ from app.forms import UserInputForm
 from datetime import datetime
 from app.functions import *
 
-VERSION="0.2.0"
+VERSION="0.2.1"
 
 author = {
     'username': 'Original by Znibb, difficulty by ItsMonkk. Merged by SiantyX',
