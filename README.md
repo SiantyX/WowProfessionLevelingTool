@@ -7,7 +7,7 @@ This version is for World of Warcraft The Burning Crusade Classic.
 ## Local development
 1. Install python3
 1. Install python3-pip
-1. Clone git repo: `git clone https://github.com/znibb/WowProfessionLevelingTool`
+1. Clone git repo: `git clone https://github.com/SiantyX/WowProfessionLevelingTool`
 1. Enter repo directory: `cd WowProfessionLevelingTool`
 1. Run startup script: `./runDevelopment.sh`
 
@@ -17,7 +17,7 @@ This version is for World of Warcraft The Burning Crusade Classic.
 ## Deployment
 1. Install docker
 1. Install docker-compose
-1. Download docker-compose.yml: `wget https://raw.githubusercontent.com/znibb/WowProfessionLevelingTool/master/docker-compose.yml`
+1. Download docker-compose.yml: `wget https://raw.githubusercontent.com/SiantyX/WowProfessionLevelingTool/master/docker-compose.yml`
 1. Deploy: `docker-compose up -d`
 
 ## Changelog
