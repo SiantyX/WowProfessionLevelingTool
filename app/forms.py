@@ -23,7 +23,7 @@ for line in responseJson:
 
 class UserInputForm(FlaskForm):
     server = SelectField(u'Server',
-        default='Gehennas',
+        default='gehennas',
         choices=[(slug, name) for slug, name in servers.items()])
     faction = SelectField(u'Faction',
         default='horde',
