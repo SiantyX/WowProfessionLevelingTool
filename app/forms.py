@@ -23,7 +23,7 @@ for line in responseJson:
 
 class UserInputForm(FlaskForm):
     server = SelectField(u'Server',
-        default='noggenfogger',
+        default='Gehennas',
         choices=[(slug, name) for slug, name in servers.items()])
     faction = SelectField(u'Faction',
         default='horde',
@@ -39,7 +39,7 @@ class UserInputForm(FlaskForm):
         validators=[InputRequired(),
                     NumberRange(min=2, max=375)])
     phase = SelectField(u'Phase',
-        default='1',
+        default='5',
         choices=[('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5')])
     calculate = SubmitField('Calculate')
     includeVendor = BooleanField(u'Vendor', default="checked")
@@ -54,7 +54,7 @@ class UserInputForm(FlaskForm):
         choices=[("Green", "Green"), 
             ("Yellow", "Yellow"), 
             ("Orange", "Orange")],
-        default="Orange")
+        default="Green")
 
     blacksmithingSchool = RadioField(u'School:',
         choices=[("None", "None"),
